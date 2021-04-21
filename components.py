@@ -15,6 +15,9 @@ class Stone:
     def color(self, color):
         self.__color = color
 
+    def __str__(self):
+        return self.color
+
 
 class Hole:
 
@@ -53,6 +56,12 @@ class Hole:
     def add_stone(self, stone: Stone):
         self.stones.append(stone)
 
+    def __str__(self):
+        stones = ""
+        for stone in self.stones:
+            stones += str(stone)
+        return "N:" + str(self.number) + " P:" + str(self.player.player_id) + " LEN:" + str(len(self.stones)) + "\t" + stones
+
 
 class Store(Hole):
 
@@ -64,3 +73,9 @@ class Store(Hole):
 
     def count_points(self):
         return len(self.stones)
+
+    def __str__(self):
+        stones = ""
+        for stone in self.stones:
+            stones += "\t" + str(stone)
+        return "-STORE- N:" + str(self.number) + " P:" + str(self.player.player_id) + " LEN:" + str(len(self.stones)) + "\t" + stones
