@@ -1,4 +1,5 @@
 from typing import List
+from player import Player
 
 
 class Stone:
@@ -19,7 +20,7 @@ class Hole:
 
     def __init__(self, number, player, stones):
         self.__number: int = number
-        self.__player = player
+        self.__player: Player = player
         self.__stones: List[Stone] = stones
 
     @property
