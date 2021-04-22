@@ -75,16 +75,15 @@ class Game:
 
         while not self.end_of_game:
             self.print_mancala()
-            print(self.get_not_empty_player_holes(self.active_player))
-            hole_number = int(self.get_player_move())
+            hole_number = self.get_hole_global_number_by_number(int(self.get_player_move()), self.active_player)
             while hole_number not in self.get_not_empty_player_holes(self.active_player):
                 print("Incorrect value!")
-                hole_number = int(self.get_player_move())
+                hole_number = self.get_hole_global_number_by_number(int(self.get_player_move()), self.active_player)
 
             self.extra_move = False
             self.make_move(hole_number)
+            self.end_of_game = self.check_end_of_game()
             if not self.extra_move:
-                self.end_of_game = self.check_end_of_game()
                 self.change_active_player()
 
         self.print_mancala()
@@ -136,7 +135,6 @@ class Game:
             print("[" + str(x) + "] ", end='')
         print()
         print("\t\t\tPLAYER 2: " + self.players[1].nick)
-
 
     def get_player_move(self) -> int:
         player = self.players[self.active_player]
@@ -213,6 +211,9 @@ class Game:
 
     def get_hole_global_number(self, hole) -> int:
         return (game_parameters.HOLES_NUMBER_ROW+1) * hole.player.player_id + hole.number
+
+    def get_hole_global_number_by_number(self, hole_number, player_id) -> int:
+        return (game_parameters.HOLES_NUMBER_ROW+1) * player_id + hole_number
 
     def get_opposite_hole(self, hole) -> Hole:
         return self.holes[14 - self.get_hole_global_number(hole)]
