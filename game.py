@@ -75,8 +75,6 @@ class Game:
 
         while not self.end_of_game:
             self.print_mancala()
-            for hole in self.holes.values():
-                print(hole)
             print(self.get_not_empty_player_holes(self.active_player))
             hole_number = int(self.get_player_move())
             while hole_number not in self.get_not_empty_player_holes(self.active_player):
@@ -86,10 +84,10 @@ class Game:
             self.extra_move = False
             self.make_move(hole_number)
             if not self.extra_move:
+                self.end_of_game = self.check_end_of_game()
                 self.change_active_player()
 
-            self.end_of_game = self.check_end_of_game()
-
+        self.print_mancala()
         self.get_result()
 
     def create_players(self):
@@ -118,7 +116,27 @@ class Game:
         self.active_player = k = random.randint(0, 1)
 
     def print_mancala(self):
-        pass
+        print("\t\t\tPLAYER 1: " + self.players[0].nick)
+        print("\t\t", end='')
+        for x in range(0, game_parameters.HOLES_NUMBER_ROW):
+            print("[" + str(game_parameters.HOLES_NUMBER_ROW - x) + "] ", end='')
+        print()
+        print("\t\t", end='')
+        for hole in reversed(self.get_player_holes(0)):
+            print(" " + str(len(hole.stones)) + "  ", end='')
+        print()
+        print("-" + str(len(self.get_store(0).stones)) + "-\t\t\t\t\t\t\t\t\t-" + str(len(self.get_store(1).stones)) + "-")
+
+        print("\t\t", end='')
+        for hole in self.get_player_holes(1):
+            print(" " + str(len(hole.stones)) + "  ", end='')
+        print()
+        print("\t\t", end='')
+        for x in range(1, game_parameters.HOLES_NUMBER_ROW+1):
+            print("[" + str(x) + "] ", end='')
+        print()
+        print("\t\t\tPLAYER 2: " + self.players[1].nick)
+
 
     def get_player_move(self) -> int:
         player = self.players[self.active_player]
