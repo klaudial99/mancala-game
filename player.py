@@ -1,9 +1,10 @@
 class Player:
 
-    def __init__(self, player_id, nick):
+    def __init__(self, player_id, nick, ai):
         self.__player_id: int = player_id
         self.__nick: str = nick
         self.__points: int = 0
+        self.__ai: bool = ai
 
     @property
     def player_id(self):
@@ -28,3 +29,11 @@ class Player:
     @points.setter
     def points(self, points):
         self.__points = points
+
+    @property
+    def ai(self):
+        return self.__ai
+
+    @ai.setter
+    def ai(self, ai):
+        self.__ai = ai

@@ -2,3 +2,5 @@ STONES_NUMBER = 4
 HOLES_NUMBER_ROW = 6
 HOLES_NUMBER_TOTAL = 2 * (HOLES_NUMBER_ROW+1)
 COLORS = ['red', 'blue', 'yellow', 'green']
+DEPTH = 2
+ALPHA_BETA = True
