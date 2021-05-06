@@ -1,4 +1,5 @@
 import copy
+import datetime
 import math
 import random
 from typing import List
@@ -79,8 +80,11 @@ class Game:
 
         while not self.check_end_of_game():
             self.print_mancala()
+            print("------------------------------------------------------")
 
             if not self.players[self.active_player].ai: # if not AI
+                if best_number in self.get_not_empty_player_holes(self.active_player):
+                    print("Best move for ", self.players[self.active_player].nick, " now:", best_number)
                 hole_number = int(self.get_player_move())
                 while hole_number not in self.get_not_empty_player_holes(self.active_player):
                     print("Incorrect value!")
@@ -95,18 +99,23 @@ class Game:
 
             self.extra_move = False
             self.make_move(hole_number)
+            if self.players[self.active_player].ai:
+                self.players[self.active_player].moves += 1
 
             if not self.extra_move:
                 self.change_active_player()
 
             if not self.check_end_of_game():
+                start_time = datetime.datetime.now()
                 node = DecisionNode(self, self.active_player, hole_number)
                 create_decision_tree(game_parameters.DEPTH, node)
                 min_max(node, game_parameters.DEPTH, self.active_player)
-                print_tree(node)
+                #print_tree(node)
                 best_number = max(node.children, key=lambda c: c.value).number
-                if not self.players[self.active_player].ai: # for human
-                    print("Best move for ", self.players[self.active_player].nick, " now:", best_number)
+                end_time = datetime.datetime.now()
+                time_diff = (end_time - start_time)
+                execution_time = time_diff.total_seconds() * 1000
+                self.players[self.active_player].time += execution_time
 
         self.print_mancala()
         self.get_result()
@@ -236,14 +245,21 @@ class Game:
 
         return False
 
-    def get_result(self):
+    def get_winner(self):
         score_1 = self.get_points(0)
         score_2 = self.get_points(1)
 
         if score_1 > score_2:
-            print("THE WINNER IS: " + self.players[0].nick + " CONGRATULATIONS!")
+            return self.players[0]
         else:
-            print("THE WINNER IS: " + self.players[1].nick + " CONGRATULATIONS!")
+            return self.players[1]
+
+    def get_result(self):
+        winner = self.get_winner()
+        print("THE WINNER IS: " + winner.nick + " CONGRATULATIONS!")
+        if winner.ai:
+            print("MOVES", winner.moves)
+            print("TIME IN MS:", winner.time)
 
     def get_points(self, player_id):
         return self.get_store(player_id).count_points()

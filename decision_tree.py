@@ -1,4 +1,4 @@
-import copy
+import pickle
 from typing import List
 
 
@@ -60,7 +60,8 @@ def create_decision_tree(depth, node: DecisionNode):
         return
 
     for possible in node.game.get_not_empty_player_holes(node.player_id):
-        new_game = copy.deepcopy(node.game)
+
+        new_game = pickle.loads(pickle.dumps(node.game))
         new_game.make_move(possible)
         if not new_game.extra_move:
             new_game.change_active_player()

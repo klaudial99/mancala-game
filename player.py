@@ -5,6 +5,8 @@ class Player:
         self.__nick: str = nick
         self.__points: int = 0
         self.__ai: bool = ai
+        self.__time: int = 0
+        self.__moves: int = 0
 
     @property
     def player_id(self):
@@ -37,3 +39,19 @@ class Player:
     @ai.setter
     def ai(self, ai):
         self.__ai = ai
+
+    @property
+    def time(self):
+        return self.__time
+
+    @time.setter
+    def time(self, time):
+        self.__time = time
+
+    @property
+    def moves(self):
+        return self.__moves
+
+    @moves.setter
+    def moves(self, moves):
+        self.__moves = moves
