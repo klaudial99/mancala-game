@@ -22,7 +22,6 @@ class Game:
         self.__active_player: int = 0
 
         self.__extra_move = False
-        #self.__end_of_game = False
 
     @property
     def holes(self):
@@ -64,14 +63,6 @@ class Game:
     def extra_move(self, extra_move):
         self.__extra_move = extra_move
 
-    # @property
-    # def end_of_game(self):
-    #     return self.__end_of_game
-    #
-    # @end_of_game.setter
-    # def end_of_game(self, end_of_game):
-    #     self.__end_of_game = end_of_game
-
     def play(self):
         self.create_players()
         self.create_game_structure()
@@ -94,6 +85,7 @@ class Game:
                 if best_number in self.get_not_empty_player_holes(self.active_player):
                     hole_number = best_number
                 else:
+                    #hole_number = 6
                     hole_number = random.choice(self.get_not_empty_player_holes(self.active_player))
                 print(self.players[self.active_player].nick + '\'s move:', hole_number)
 
@@ -106,15 +98,16 @@ class Game:
                 self.change_active_player()
 
             if not self.check_end_of_game():
-                start_time = datetime.datetime.now()
+
                 node = DecisionNode(self, self.active_player, hole_number)
                 create_decision_tree(game_parameters.DEPTH, node)
+                start_time = datetime.datetime.now()
                 min_max(node, game_parameters.DEPTH, self.active_player)
                 #print_tree(node)
                 best_number = max(node.children, key=lambda c: c.value).number
                 end_time = datetime.datetime.now()
                 time_diff = (end_time - start_time)
-                execution_time = time_diff.total_seconds() * 1000
+                execution_time = time_diff.total_seconds() * 1000000
                 self.players[self.active_player].time += execution_time
 
         self.print_mancala()
@@ -259,7 +252,7 @@ class Game:
         print("THE WINNER IS: " + winner.nick + " CONGRATULATIONS!")
         if winner.ai:
             print("MOVES", winner.moves)
-            print("TIME IN MS:", winner.time)
+            print("TIME IN MICROSECONDS:", winner.time)
 
     def get_points(self, player_id):
         return self.get_store(player_id).count_points()
