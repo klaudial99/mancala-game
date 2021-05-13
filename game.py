@@ -64,7 +64,7 @@ class Game:
         self.__extra_move = extra_move
 
     def play(self):
-        self.create_players()
+        self.create_players(heuristic=1)
         self.create_game_structure()
         self.draw_first_player()
         best_number = math.inf
@@ -85,7 +85,7 @@ class Game:
                 if best_number in self.get_not_empty_player_holes(self.active_player):
                     hole_number = best_number
                 else:
-                    #hole_number = 6
+                    #hole_number = 1
                     hole_number = random.choice(self.get_not_empty_player_holes(self.active_player))
                 print(self.players[self.active_player].nick + '\'s move:', hole_number)
 
@@ -102,7 +102,7 @@ class Game:
                 node = DecisionNode(self, self.active_player, hole_number)
                 create_decision_tree(game_parameters.DEPTH, node)
                 start_time = datetime.datetime.now()
-                min_max(node, game_parameters.DEPTH, self.active_player)
+                min_max(node, game_parameters.DEPTH, self.active_player, 3)
                 #print_tree(node)
                 best_number = max(node.children, key=lambda c: c.value).number
                 end_time = datetime.datetime.now()
@@ -113,7 +113,7 @@ class Game:
         self.print_mancala()
         self.get_result()
 
-    def create_players(self):
+    def create_players(self, heuristic):
         print("Hello Player 1! Enter your nick:")
         nick = input("> ")
         print("Do you want AI to play for you? [y/n]")
@@ -122,7 +122,7 @@ class Game:
             ai = True
         elif inp in ['n', "N"]:
             ai = False
-        player1 = Player(0, nick, ai)
+        player1 = Player(0, nick, ai, heuristic)
         print("Hello Player 2! Enter your nick:")
         nick = input("> ")
         print("Do you want AI to play for you? [y/n]")
@@ -131,7 +131,7 @@ class Game:
             ai = True
         elif inp in ['n', "N"]:
             ai = False
-        player2 = Player(1, nick, ai)
+        player2 = Player(1, nick, ai, heuristic)
         self.players = [player1, player2]
 
     def create_game_structure(self):
@@ -212,6 +212,7 @@ class Game:
         store.add_all_stones(copy.copy(hole.stones))
         hole.remove_stones()
         store.add_all_stones(copy.copy(opposite_hole.stones))
+        self.players[self.active_player].stolen_stones += len(opposite_hole.stones)
         opposite_hole.remove_stones()
 
     def change_active_player(self):

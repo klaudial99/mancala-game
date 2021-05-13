@@ -4,9 +4,9 @@ import game_parameters
 from decision_tree import DecisionNode
 
 
-def min_max(node: DecisionNode, depth, max_id, alpha=-math.inf, beta=math.inf, max_turn=True, alpha_beta=game_parameters.ALPHA_BETA):
+def min_max(node: DecisionNode, depth, max_id, heuristic, alpha=-math.inf, beta=math.inf, max_turn=True, alpha_beta=game_parameters.ALPHA_BETA):
     if depth == 0 or end_of_game(node) or node.children == []:
-        node.value = measure_function(node, max_id)
+        node.value = measure_function(node, max_id, heuristic)
         return node.value
 
     if max_turn:
@@ -14,7 +14,7 @@ def min_max(node: DecisionNode, depth, max_id, alpha=-math.inf, beta=math.inf, m
         max_val = -math.inf
         for child in node.children:
             is_max_turn = max_id == child.player_id
-            val = max(val, min_max(child, depth-1, max_id, alpha, beta, is_max_turn, alpha_beta))
+            val = max(val, min_max(child, depth-1, max_id, heuristic, alpha, beta, is_max_turn, alpha_beta))
             max_val = max(max_val, val)
             if alpha_beta:
                 alfa = max(alpha, val)
@@ -27,7 +27,7 @@ def min_max(node: DecisionNode, depth, max_id, alpha=-math.inf, beta=math.inf, m
         min_val = math.inf
         for child in node.children:
             is_max_turn = max_id == child.player_id
-            val = min(val, min_max(child, depth-1, max_id, alpha, beta, is_max_turn, alpha_beta))
+            val = min(val, min_max(child, depth-1, max_id, heuristic, alpha, beta, is_max_turn, alpha_beta))
             min_val = min(min_val, val)
             if alpha_beta:
                 beta = min(beta, val)
@@ -46,7 +46,11 @@ def end_of_game(node: DecisionNode):
     return True
 
 
-def measure_function(node: DecisionNode, root_id):
+def measure_function(node: DecisionNode, root_id, heurisitic):
     game = node.game
-    return game.get_points(root_id) - game.get_points(game.get_opponent_id(root_id))
-
+    if heurisitic == 1:
+        return game.get_points(root_id) - game.get_points(game.get_opponent_id(root_id))
+    elif heurisitic == 2:
+        return game.players[root_id].stolen_stones
+    elif heurisitic == 3:
+        return game.get_points(root_id)
